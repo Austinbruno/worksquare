@@ -3,7 +3,7 @@ import React from "react";
 const Header = () => {
     return (
         <Text
-            w="258px"
+            w= "258px"
             h="50px"
             color="#E9C597"
             fontWeight="800"

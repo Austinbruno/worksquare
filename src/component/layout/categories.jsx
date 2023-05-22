@@ -1,18 +1,25 @@
 import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories } from "../../config/data";
 import AddCategoryModal from "../atom/addCategoryModal";
-// import { categories } from "../../config/data";
-// import Category from "../atom/category";
 
 const Categories = (props) => {
     const { onCategorySelect } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [allCategories, setAllCategories] = useState(categories);
+    const [allCategories, setAllCategories] = useState([]);
+    useEffect(() => {
+        if (!localStorage.categories?.length) {
+            localStorage.categories = JSON.stringify(categories);
+        } else {
+            const stored = JSON.parse(localStorage.categories);
+            setAllCategories(stored);
+        }
+    }, []);
+
     const handleSubmit = (name, color) => {
-        console.log("name:", name);
         categories.push({ name, color });
         setAllCategories(categories);
+        localStorage.categories = JSON.stringify(categories);
         onClose();
     };
 
@@ -20,12 +27,15 @@ const Categories = (props) => {
         onCategorySelect(selectedCategory);
     };
 
-    //
     return (
         <Box
             bg="#354259"
             minH="514px"
             w="250px"
+            display={{
+                sm: "none",
+                xl: "block",
+            }}
             borderRadius="10px"
             borderBottom="5px solid #44A0A0"
         >
