@@ -1,24 +1,16 @@
-import logo from './logo.svg';
+import { Box } from '@chakra-ui/react';
 import './App.css';
+import Moon from './component/atom/moon';
+import Header from './component/header';
+import TaskManager from './component/layout/taskManager';
 
-function App() {
+const  App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box padding="50px" bg="#121c2e" h="804px">
+      <Moon />
+      <Header />
+      <TaskManager />
+    </Box>
   );
 }
 
