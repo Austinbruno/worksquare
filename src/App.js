@@ -1,17 +1,17 @@
-import { Box } from '@chakra-ui/react';
-import './App.css';
-import Moon from './component/atom/moon';
-import Header from './component/header';
-import TaskManager from './component/layout/taskManager';
+import { Box } from "@chakra-ui/react";
+import "./App.css";
+import Moon from "./component/atom/moon";
+import Header from "./component/header";
+import TaskManager from "./component/layout/taskManager";
 
-const  App = () => {
+const App = () => {
   return (
-    <Box padding="50px" bg="#121c2e" h="804px">
+    <Box padding="50px" bg="#121c2e">
       <Moon />
       <Header />
       <TaskManager />
     </Box>
   );
-}
+};
 
 export default App;
