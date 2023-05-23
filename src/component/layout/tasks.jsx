@@ -1,6 +1,5 @@
-import { Box, Text, Flex, useDisclosure, Button } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { tasks } from "../../config/data";
+import { Box, Text, Flex, useDisclosure } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FaCheck } from "react-icons/fa";
 import AddTaskModal from "../atom/addTaskModal";
@@ -9,6 +8,7 @@ import Categories from "./categories";
 
 const Tasks = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     const {
         isOpen: isOpenEdit,
         onOpen: onOpenEdit,
@@ -19,40 +19,58 @@ const Tasks = () => {
 
     const [currentColor, setColor] = useState({});
 
-    const [allTasks, setAllTasks] = useState(tasks);
+    const [allTasks, setAllTasks] = useState([]);
 
+    const taskLength = allTasks.length;
+    const length = allTasks.length > 0 ? taskLength : "No ";
+    useEffect(() => {
+        if (!localStorage.tasks?.length) {
+            localStorage.tasks = JSON.stringify([]);
+        } else {
+            const stored = JSON.parse(localStorage.tasks);
+            setAllTasks(stored);
+        }
+    }, []);
+
+    // Add Tasks
     const handleSubmit = ({ title, category, color }) => {
-        tasks.push({ title, category, color });
-        setAllTasks(tasks);
+        allTasks.push({ title, category, color });
+        setAllTasks(allTasks);
+        localStorage.tasks = JSON.stringify(allTasks);
+
         onClose();
     };
+
+    // Edit Tasks
     const handleEdit = (task) => {
-        console.log("task:", task);
-        tasks[task.index] = task;
-        console.log("tasks:", tasks);
-        setAllTasks(tasks);
+        allTasks[task.index] = task;
+        setAllTasks(allTasks);
+        localStorage.tasks = JSON.stringify(task);
         onCloseEdit();
     };
-
+    // Filter Tasks
     const handleCategoryFilter = (selectedCategory) => {
-        const filteredTasks = tasks.filter(
+        const filteredTasks = allTasks.filter(
             (task) => task.category === selectedCategory
         );
 
         setAllTasks(filteredTasks);
     };
+    // Delete Tasks
     const handleDelete = (taskIndex) => {
         const updatedTasks = allTasks.filter(
             (task, index) => index !== taskIndex
         );
         setAllTasks(updatedTasks);
+        localStorage.tasks = JSON.stringify(updatedTasks);
+
         onClose();
     };
 
     return (
         <>
             <Categories onCategorySelect={handleCategoryFilter} />
-            <Box h="514px" w="650px">
+            <Box h="514px" minW={{ lg: "650px", sm: "425px" }}>
                 <Flex
                     bg="#354259"
                     borderRadius="10px"
@@ -62,7 +80,7 @@ const Tasks = () => {
                     borderBottom="5px solid #44A0A0"
                 >
                     <Text fontWeight="700" fontSize="20px" color="#44A0A0">
-                  
+                        {length} Task
                     </Text>
                     <Box
                         bg="#44A0A0"
@@ -83,20 +101,18 @@ const Tasks = () => {
                     >
                         Add New Task
                     </Box>
-                    <Text
-                        fontWeight="700"
-                        fontSize="20px"
-                        cursor="pointer"
-                        color="#44A0A0"
-                    >
-                        Clear Completed
-                    </Text>
                 </Flex>
 
-                <Box bg="#354259" borderRadius="10px" mt="11px">
+                <Box
+                    bg="#354259"
+                    borderBottom={
+                        allTasks.length === 0 ? "none" : "5px solid #44A0A0"
+                    }
+                    borderRadius="10px"
+                    mt="11px"
+                >
                     <Box>
                         {allTasks.map((task, index) => {
-                            console.log(index+1);
                             return (
                                 <Flex
                                     key={index}
@@ -109,11 +125,15 @@ const Tasks = () => {
                                     lineHeight="27px"
                                     fontWeight="400"
                                     px="10px"
-                                    borderBottom="1px solid #F6F6F6"
+                                    borderBottom={
+                                        index === allTasks.length - 1
+                                            ? "none"
+                                            : "1px solid #F6F6F6"
+                                    }
                                 >
                                     <Box
-                                        w="20px"
-                                        h="20px"
+                                        w="35px"
+                                        h="35px"
                                         borderRadius="100%"
                                         bg="#4CAF50"
                                         p="9px"
@@ -131,63 +151,39 @@ const Tasks = () => {
                                     >
                                         {task.title}
                                     </Text>
-                                    <Box
-                                        bg={task.color}
-                                        w="150px"
-                                        borderRadius="10px"
-                                        mb="10px"
-                                        py="auto"
+
+                                    <Flex
+                                        gap="15px"
                                         textAlign="center"
-                                        fontSize="20px"
-                                        lineHeight="27px"
-                                        fontWeight="400"
+                                        alignItems="center"
                                     >
-                                        {task.category}
-                                    </Box>
-                                    <Box cursor="pointer" onClick={() => handleDelete(index)}>
-                                        <TiDelete size="40px" color="#FF5252"/>
-                                    </Box>
+                                        <Box
+                                            bg={task.color}
+                                            w="150px"
+                                            borderRadius="10px"
+                                            mb="10px"
+                                            py="auto"
+                                            textAlign="center"
+                                            fontSize="20px"
+                                            lineHeight="27px"
+                                            fontWeight="400"
+                                        >
+                                            {task.category}
+                                        </Box>
+                                        <Box
+                                            cursor="pointer"
+                                            onClick={() => handleDelete(index)}
+                                        >
+                                            <TiDelete
+                                                size="40px"
+                                                color="#FF5252"
+                                            />
+                                        </Box>
+                                    </Flex>
                                 </Flex>
                             );
                         })}
                     </Box>
-
-                    <Flex
-                        justifyContent="center"
-                        alignItems="center"
-                        borderBottom="5px solid #44A0A0"
-                        borderRadius="0px 0px 10px 10px"
-                        h="45px"
-                        p="8px 0px 9x 0px"
-                        cursor="pointer"
-                    >
-                        <Text
-                            fontWeight="800"
-                            fontSize="20px"
-                            pr="21px"
-                            color="#44A0A0"
-                            lineHeight="28px"
-                        >
-                            Active
-                        </Text>
-                        <Text
-                            fontWeight="800"
-                            fontSize="20px"
-                            pr="21px"
-                            lineHeight="28px"
-                        >
-                            All
-                        </Text>
-                        <Text
-                            fontWeight="800"
-                            fontSize="20px"
-                            pr="21px"
-                            color="#44A0A0"
-                            lineHeight="28px"
-                        >
-                            Completed
-                        </Text>
-                    </Flex>
                 </Box>
                 <AddTaskModal
                     isOpen={isOpen}

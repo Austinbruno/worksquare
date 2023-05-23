@@ -4,15 +4,7 @@ import Tasks from "./tasks";
 
 const TaskManager = () => {
     return (
-        <Flex
-            // alignItems="center"
-            justifyContent="center"
-            mt="114px"
-            color="white"
-            // h="514px"
-            gap="12px"
-        >
-            {/* <Categories /> */}
+        <Flex justifyContent="center" mt="114px" color="white" gap="12px">
             <Tasks />
         </Flex>
     );
